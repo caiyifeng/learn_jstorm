@@ -37,13 +37,15 @@ import com.alibaba.jstorm.utils.JStormServerUtils;
 import com.alibaba.jstorm.utils.JStormUtils;
 
 /**
- * NimbusServer work flow: 1. cleanup interrupted topology delete
- * /storm-local-dir/nimbus/topologyid/stormdis delete
- * /storm-zk-root/storms/topologyid 2. set /storm-zk-root/storms/topology stats
- * as run 3. start one thread, every nimbus.monitor.reeq.secs set
- * /storm-zk-root/storms/ all topology as monitor. when the topology's status is
- * monitor, nimubs would reassign workers 4. start one threa, every
- * nimubs.cleanup.inbox.freq.secs cleanup useless jar
+ * NimbusServer work flow:
+ * 1. cleanup interrupted topology
+ * delete /storm-local-dir/nimbus/topologyid/stormdis
+ * delete /storm-zk-root/storms/topologyid
+ * 2. set /storm-zk-root/storms/topology stats as run
+ * 3. start one thread, every nimbus.monitor.reeq.secs set
+ * /storm-zk-root/storms/ all topology as monitor.
+ * when the topology's status is monitor, nimubs would reassign workers
+ * 4. start one threa, every nimubs.cleanup.inbox.freq.secs cleanup useless jar
  * 
  * @author version 1: Nathan Marz version 2: Lixin/Chenjun version 3: Longda
  */
@@ -91,7 +93,7 @@ public class NimbusServer {
         INimbus iNimbus = new DefaultInimbus();
 
         /**
-         * 驱动服务
+         * 启动服务
          */
         instance.launchServer(config, iNimbus);
 
@@ -188,6 +190,9 @@ public class NimbusServer {
 
     private void init(Map conf) throws Exception {
 
+        /**
+         * 删除所有没有注册在ZK的topologyId的本地目录
+         */
         NimbusUtils.cleanupCorruptTopologies(data);
 
         initTopologyAssign();

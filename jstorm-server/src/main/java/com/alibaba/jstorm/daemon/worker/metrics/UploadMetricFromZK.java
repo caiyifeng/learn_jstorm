@@ -75,10 +75,18 @@ public class UploadMetricFromZK implements Runnable {
 
         try {
             TopoCommStatsInfo ret;
+            /**
+             * 从/taskbeats下获取心跳的topologyId
+             */
             List<String> topologys = clusterState.heartbeat_storms();
 
             for (String topologyId : topologys) {
                 if (topologyMap.containsKey(topologyId) == false) {
+                    /**
+                     * 根据topologyId从zk的/topology/{topologyId}节点获取
+                     * StormBase信息
+                     * 生成TopoCommStatsInfo对象放入topologyMap中
+                     */
                     StormBase base = clusterState.storm_base(topologyId, null);
                     if (base == null) {
                         topologyMap.remove(topologyId);
@@ -143,6 +151,9 @@ public class UploadMetricFromZK implements Runnable {
 
     }
 
+    /**
+     * 将有心跳的task分类放到spout和bolt Map中
+     */
     private TopoCommStatsInfo getCommStatsData(String topologyId) {
         try {
             String taskId;
